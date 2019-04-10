@@ -1,5 +1,5 @@
-# MyTensorflowMobileBenchmark
-My Tensorflow Mobile Benchmark
+# MyTensorflowBenchmark
+My Tensorflow Benchmark
 
 1. Model
   - Classification
