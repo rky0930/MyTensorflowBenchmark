@@ -1,1 +1,14 @@
 dataset/mscoco*
+models/classification/tensorflow/*
+models/classification/tensorflow_lite/*
+models/classification/tensorrt/*
+models/object_detection/tensorflow/*
+models/object_detection/tensorflow_lite/*
+models/object_detection/tensorrt/*
+
+!models/classification/tensorflow/README.md
+!models/classification/tensorflow_lite/README.md
+!models/classification/tensorrt/README.md
+!models/object_detection/tensorflow/README.md
+!models/object_detection/tensorflow_lite/README.md
+!models/object_detection/tensorrt/README.md
