@@ -1,0 +1,12 @@
+benchmark:
+  base_dir: /media/yoon/hdd1/workspace/repos/git_rky0930/MyTensorflowBenchmark
+  image_dir: dataset/mscoco_val2017_via_format/mscoco_val2017/*
+  annotation_file: mscoco_val2017_region_data.json
+  label_map: dataset/mscoco_val2017_via_format/mscoco_label_map.yaml
+  inference_result_file: mscoco_val2017_inference_result.json
+  max_example_num: 10000
+
+object_detection:
+  base_dir: /media/yoon/hdd1/workspace/repos/git_rky0930/MyTensorflowBenchmark
+  checkpoint: models/object_detection/tensorflow/ssd_mobilenet_v2_coco_2018_03_29/frozen_inference_graph.pb
+  confidence_score_threshold: 0.5
