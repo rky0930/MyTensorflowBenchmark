@@ -5,7 +5,8 @@ models/classification/tensorrt/*
 models/object_detection/tensorflow/*
 models/object_detection/tensorflow_lite/*
 models/object_detection/tensorrt/*
-
+*.pyc
+.vscode
 !models/classification/tensorflow/README.md
 !models/classification/tensorflow_lite/README.md
 !models/classification/tensorrt/README.md
