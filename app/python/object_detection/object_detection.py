@@ -2,6 +2,7 @@ import os
 from time import time
 import numpy as np
 import cv2
+import json
 import tensorflow as tf
 from utils.label_map_tools import load_label_map
 
@@ -24,6 +25,7 @@ class ObjectDetection(object):
         self.total_inference_t = 0
         self.save_inference_result = save_inference_result
         if self.save_inference_result:
+            print("save_inference_result:", self.save_inference_result)
             self.inference_result = {}
             self.inference_result_file = config['inference_result_file']
 
@@ -56,10 +58,11 @@ class ObjectDetection(object):
                     serialized_graph = fid.read()
                     od_graph_def.ParseFromString(serialized_graph)
                     tf.import_graph_def(od_graph_def, name="")
-        self.image_tensor = self.sess.graph.get_tensor_by_name('image_tensor:0')
-        self.boxes        = self.sess.graph.get_tensor_by_name('detection_boxes:0')
-        self.scores       = self.sess.graph.get_tensor_by_name('detection_scores:0')
-        self.label_ids    = self.sess.graph.get_tensor_by_name('detection_classes:0')
+        self.image_tensor   = self.sess.graph.get_tensor_by_name('image_tensor:0')
+        self.boxes          = self.sess.graph.get_tensor_by_name('detection_boxes:0')
+        self.scores         = self.sess.graph.get_tensor_by_name('detection_scores:0')
+        self.label_ids      = self.sess.graph.get_tensor_by_name('detection_classes:0')
+        self.num_detections = self.sess.graph.get_tensor_by_name('num_detections:0')
 
     def set_tensorflow_lite_graph(self):
         self.interpreter = tf.lite.Interpreter(model_path=self.model_path)
@@ -85,7 +88,7 @@ class ObjectDetection(object):
             (self.tflite_input_height, self.tflite_input_width), 
              interpolation=cv2.INTER_AREA)
             if not self.quantized:
-                input_image =   (2.0 / 255.0) * input_image - 1.0 #(resized_input - 128.) / 128.
+                input_image =  (input_image - 128.) / 128. #(2.0 / 255.0) * input_image - 1.0 
         rgb_image = input_image[...,::-1] # BGR to RGB
         image_np = np.array(rgb_image, dtype=self.dtype)     
         x = np.expand_dims(image_np, axis=0)
@@ -99,11 +102,18 @@ class ObjectDetection(object):
             boxes = self.interpreter.get_tensor(self.output_details[0]['index'])
             label_ids = self.interpreter.get_tensor(self.output_details[1]['index']) + 1
             scores = self.interpreter.get_tensor(self.output_details[2]['index'])
-            # num_detections = interpreter.get_tensor(output_details[3]['index'])
+            num_detections = int(self.interpreter.get_tensor(self.output_details[3]['index'])[0])
+            
         else:
-            boxes, scores, label_ids = self.sess.run(
-            [self.boxes, self.scores, self.label_ids],
+            boxes, scores, label_ids, num_detections = self.sess.run(
+            [self.boxes, self.scores, self.label_ids, self.num_detections],
             feed_dict={self.image_tensor: preprocessed_image})
+            num_detections = int(num_detections)
+        # print(num_detections)
+        # print(scores)
+        boxes = boxes[0][:num_detections]
+        label_ids = label_ids[0][:num_detections]
+        scores = scores[0][:num_detections]
         return boxes, scores, label_ids
 
     def run(self, image_path):
@@ -122,14 +132,14 @@ class ObjectDetection(object):
     
     def postprocessing(self, boxes, scores, label_ids):
         obj_indices = np.squeeze(np.argwhere(
-        scores[0]>self.confidence_score_threshold), axis=1)
-        boxes = boxes[0][obj_indices]
+        scores>self.confidence_score_threshold), axis=1)
+        boxes = boxes[obj_indices]
         boxes[:,[0,2]] *= self.image_height # ymin, ymax
         boxes[:,[1,3]] *= self.image_width # xmin, xmax
         boxes = np.rint(boxes[:, [1,0,3,2]]).astype(np.int) # xmin, ymin, xmax, ymax
         
-        scores = scores[0][obj_indices]
-        label_ids = label_ids[0][obj_indices]
+        scores = scores[obj_indices]
+        label_ids = label_ids[obj_indices]
         return boxes, scores, label_ids
 
     def close(self):
@@ -179,5 +189,5 @@ class ObjectDetection(object):
 
     def write_to_file(self):
         with open(self.inference_result_file, "w") as ret_fid:
-            json.dump(inference_result, ret_fid, ensure_ascii=False)
+            json.dump(self.inference_result, ret_fid, ensure_ascii=False)
         print("Inference result file is created: {}".format(self.inference_result_file))

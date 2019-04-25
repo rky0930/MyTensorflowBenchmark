@@ -42,7 +42,9 @@ def run_accuracy_check(accuracy):
     accuracy.precision_and_recall(
         label_name='all', 
         print_raw_data=args.print_acc_raw_data)
-
+    if args.save_inference_result:
+        object_detection.write_to_file()
+    
 def run_memory_check(image_dir, max_example_num=10):
     example_cnt = 0
     total_rss = 0
@@ -96,8 +98,8 @@ if __name__ == "__main__":
         accuracy = Accuracy(config['accuracy'])
         total_example_num, avg_inference_t = \
             run_object_detection(image_dir, accuracy, config['accuracy']['max_example_num'])
-        run_accuracy_check(accuracy)
     print(mem_msg)
     print(size_msg)
     print(fps_msg)
     print("=== Benchmark END ===")
+        run_accuracy_check(accuracy)

@@ -1,15 +1,12 @@
-dataset/mscoco*
-models/classification/tensorflow/*
-models/classification/tensorflow_lite/*
-models/classification/tensorrt/*
-models/object_detection/tensorflow/*
-models/object_detection/tensorflow_lite/*
-models/object_detection/tensorrt/*
 *.pyc
 .vscode
-!models/classification/tensorflow/README.md
-!models/classification/tensorflow_lite/README.md
-!models/classification/tensorrt/README.md
-!models/object_detection/tensorflow/README.md
-!models/object_detection/tensorflow_lite/README.md
-!models/object_detection/tensorrt/README.md
+
+# Dataset
+dataset/mscoco_val2017_via_format*
+
+# Models
+models/classification/tensorflow_lite/mobilenet_v2_1.0_224*
+models/object_detection/tensorflow/ssd_mobilenet_v2_coco_2018_03_29*
+models/object_detection/tensorflow/ssd_mobilenet_v2_quantized_300x300_coco_2019_01_03*
+models/object_detection/tensorflow_lite/ssd_mobilenet_v2_coco_2018_03_29_tflite*
+models/object_detection/tensorflow_lite/ssd_mobilenet_v2_quantized_300x300_coco_2019_01_03_tflite*

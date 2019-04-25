@@ -67,7 +67,9 @@ class Accuracy:
             inter_area = max(0, x2-x1+1) * max(0, y2-y1+1)
             rect1_area = (xmax1-xmin1+1) * (ymax1-ymin1+1)
             rect2_area = (xmax2-xmin2+1) * (ymax2-ymin2+1)
-            iou = inter_area / float(rect1_area + rect2_area - inter_area)
+            total_area = float(rect1_area + rect2_area - inter_area)
+            
+            iou = inter_area / total_area if total_area != 0 else 0
             iou_box = (x1, y1, x2, y2)
             return iou_box, iou
 
