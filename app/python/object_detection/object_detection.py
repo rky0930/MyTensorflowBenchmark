@@ -7,7 +7,7 @@ import tensorflow as tf
 from utils.label_map_tools import load_label_map
 
 class ObjectDetection(object):
-    def __init__(self, config, save_inference_result=False):
+    def __init__(self, config, save_inference_result=False, verbose=False):
         # Model
         self.model_path = os.path.join(config['base_dir'], config['checkpoint'])
         self.confidence_score_threshold = config['confidence_score_threshold']    
@@ -24,11 +24,11 @@ class ObjectDetection(object):
         self.inference_counter = 0
         self.total_inference_t = 0
         self.save_inference_result = save_inference_result
-        if self.save_inference_result:
-            print("save_inference_result:", self.save_inference_result)
+        if save_inference_result:
+            print("save_inference_result:", save_inference_result)
             self.inference_result = {}
             self.inference_result_file = config['inference_result_file']
-
+        self.verbose = verbose
     def set_model_size(self):
         if os.path.isdir(self.model_path):
             total_size = 0
@@ -116,18 +116,31 @@ class ObjectDetection(object):
         scores = scores[0][:num_detections]
         return boxes, scores, label_ids
 
+    def print(self, message):
+        if self.verbose:
+            print("object detection.py | {}".format(message))
+        
     def run(self, image_path):
         # Get image
+        self.print("run")
         image = cv2.imread(image_path)
+        self.print("image read done")
         self.image_height, self.image_width, _ = image.shape
+        self.print("self.image_height: {} self.image_width: {}".format(self.image_height, self.image_width))
         preprocessed_image = self.preprocessing(image)
+        self.print("preprocessing done")
         start_t = time()
         (boxes, scores, label_ids) = self.sess_run(preprocessed_image)
+        self.print("sess_run done")
         self.total_inference_t += time() - start_t 
+        self.print("total_inference_t: {}".format(self.total_inference_t))
         self.inference_counter += 1 
+        self.print("inference_counter: {}".format(self.inference_counter))
         boxes, scores, label_ids = self.postprocessing(boxes, scores, label_ids)
+        self.print("postprocessing done")
         if self.save_inference_result:
             self.add_annotation(image_path, boxes, label_ids)
+            self.print("add_annotation done")
         return boxes, scores, label_ids
     
     def postprocessing(self, boxes, scores, label_ids):

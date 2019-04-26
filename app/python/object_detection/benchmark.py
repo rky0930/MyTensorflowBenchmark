@@ -49,6 +49,8 @@ def run_memory_check(image_dir, max_example_num=10):
     example_cnt = 0
     total_rss = 0
     for image_path in sorted(glob.glob(image_dir)):
+        if verbose:
+            print("image read: {}".format(example_cnt))
         if example_cnt >= max_example_num: 
             break
         boxes, socres, label_ids = object_detection.run(image_path)
@@ -66,7 +68,7 @@ def run_object_detection(image_dir, accuracy, max_example_num):
     for image_path in sorted(glob.glob(image_dir)):
         if max_example_num and example_cnt >= max_example_num: 
             break
-        if verbose and example_cnt % 100 == 0:
+        if verbose:
             print("image read: {}".format(example_cnt))
         boxes, socres, label_ids = object_detection.run(image_path)
         if accuracy:
@@ -78,23 +80,27 @@ def run_object_detection(image_dir, accuracy, max_example_num):
 
 if __name__ == "__main__":
     object_detection = \
-        ObjectDetection(config['object_detection'], args.save_inference_result)
+        ObjectDetection(config['object_detection'], args.save_inference_result, args.verbose)
     mode = args.mode
     image_dir = os.path.join(config['benchmark']['base_dir'], config['benchmark']['image_dir'])
     if mode in ("memory_usage", "all"):
+        print("==Start memory usage check==")
         example_cnt, avg_rss = run_memory_check(image_dir, config['memory_usage']['max_example_num'])
         avg_rss_mb = round(avg_rss/1024./1024.,3)
         mem_msg = "Average RSS for {} inference: {} Mb".format(example_cnt, avg_rss_mb)
     if mode in ("model_size", "all"):
+        print("==Start model size check==")
         model_size = run_model_size_check()
         model_size_mb = round(model_size/1024./1024.,3)
         size_msg = "Model size: {}Mb".format(model_size_mb)
     if mode in ("fps", "all"):
+        print("==Start FPS check==")
         total_example_num, avg_inference_t = \
             run_object_detection(image_dir, None, config['fps']['max_example_num'])
         fps = round(1 / avg_inference_t, 3) if avg_inference_t != 0 else 0
         fps_msg = "Average_duration: {} FPS: {} for {} inference".format(avg_inference_t, fps, total_example_num)
     if mode in ("accuracy", "all"):
+        print("==Start accuracy check==")
         accuracy = Accuracy(config['accuracy'])
         total_example_num, avg_inference_t = \
             run_object_detection(image_dir, accuracy, config['accuracy']['max_example_num'])
