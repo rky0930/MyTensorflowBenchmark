@@ -65,7 +65,7 @@ class ObjectDetection(object):
         self.num_detections = self.sess.graph.get_tensor_by_name('num_detections:0')
 
     def set_tensorflow_lite_graph(self):
-        self.interpreter = tf.lite.Interpreter(model_path=self.model_path)
+        self.interpreter = tf.contrib.lite.Interpreter(model_path=self.model_path)
         self.interpreter.allocate_tensors()
         # Get input and output tensors.
         self.input_details = self.interpreter.get_input_details()
