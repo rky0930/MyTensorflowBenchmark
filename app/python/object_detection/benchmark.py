@@ -98,8 +98,8 @@ if __name__ == "__main__":
         accuracy = Accuracy(config['accuracy'])
         total_example_num, avg_inference_t = \
             run_object_detection(image_dir, accuracy, config['accuracy']['max_example_num'])
+        run_accuracy_check(accuracy)
     print(mem_msg)
     print(size_msg)
     print(fps_msg)
     print("=== Benchmark END ===")
-        run_accuracy_check(accuracy)
