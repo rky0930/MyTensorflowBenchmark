@@ -22,6 +22,7 @@ class ObjectDetection(object):
         else:
             self.set_tensorflow_graph()
         self.inference_counter = 0
+        self.first_inference_t = 0
         self.total_inference_t = 0
         self.save_inference_result = save_inference_result
         if save_inference_result:
@@ -73,14 +74,21 @@ class ObjectDetection(object):
         self.tflite_input_height = int(self.input_details[0]['shape'][1])
         self.tflite_input_width  = int(self.input_details[0]['shape'][2])
             
+    def get_first_inference_time(self):
+        return round(self.first_inference_t, 3)
+
     def get_average_inference_time(self):
         if self.inference_counter == 0:
             return 0
-        return round(self.total_inference_t / float(self.inference_counter), 3)
-    
+        elif self.total_inference_t == 1:
+            return self.get_first_inference_time()
+        
+        return round(self.total_inference_t / float(self.inference_counter-1), 3)
+
     def reset_fps(self):
-        self.inference_counter = 0
+        self.first_inference_t = 0
         self.total_inference_t = 0
+        self.inference_counter = 0
 
     def preprocessing(self, input_image):
         if self.tflite:
@@ -116,31 +124,35 @@ class ObjectDetection(object):
         scores = scores[0][:num_detections]
         return boxes, scores, label_ids
 
-    def print(self, message):
+    def _print(self, message):
         if self.verbose:
             print("object detection.py | {}".format(message))
+        pass 
         
     def run(self, image_path):
         # Get image
-        self.print("run")
+        self._print("run")
         image = cv2.imread(image_path)
-        self.print("image read done")
+        self._print("image read done")
         self.image_height, self.image_width, _ = image.shape
-        self.print("self.image_height: {} self.image_width: {}".format(self.image_height, self.image_width))
+        self._print("self.image_height: {} self.image_width: {}".format(self.image_height, self.image_width))
         preprocessed_image = self.preprocessing(image)
-        self.print("preprocessing done")
+        self._print("preprocessing done")
         start_t = time()
         (boxes, scores, label_ids) = self.sess_run(preprocessed_image)
-        self.print("sess_run done")
-        self.total_inference_t += time() - start_t 
-        self.print("total_inference_t: {}".format(self.total_inference_t))
+        self._print("sess_run done")
+        if self.inference_counter == 0: # Skip first 5 inference duration
+            self.first_inference_t += time() - start_t 
+        else:
+            self.total_inference_t += time() - start_t 
         self.inference_counter += 1 
-        self.print("inference_counter: {}".format(self.inference_counter))
+        self._print("total_inference_t: {}".format(self.total_inference_t))
+        self._print("inference_counter: {}".format(self.inference_counter))
         boxes, scores, label_ids = self.postprocessing(boxes, scores, label_ids)
-        self.print("postprocessing done")
+        self._print("postprocessing done")
         if self.save_inference_result:
             self.add_annotation(image_path, boxes, label_ids)
-            self.print("add_annotation done")
+            self._print("add_annotation done")
         return boxes, scores, label_ids
     
     def postprocessing(self, boxes, scores, label_ids):
