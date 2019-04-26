@@ -17,14 +17,16 @@ MODEL_NAME=ssd_mobilenet_v2_quantized_300x300_coco_2019_01_03
 QT_BASE_DIR=${WORKSPACE}/tensorflow/${MODEL_NAME}
 CONFIG_FILE=${QT_BASE_DIR}/pipeline.config
 CHECKPOINT_PATH=${QT_BASE_DIR}/model.ckpt
-OUTPUT_DIR=${WORKSPACE}/tensorflow_lite/${MODEL_NAME}_tflite
+MAX_DETECTIONS=50
+OUTPUT_DIR=${WORKSPACE}/tensorflow_lite/${MODEL_NAME}_tflite_max${MAX_DETECTIONS}
 
 # Create TensorFlow frozen graph with compatible ops that we can use with TensorFlow Lite
 cd ${WORKSPACE}
 python ${TF_MODEL_RESEARCH_PATH}/object_detection/export_tflite_ssd_graph.py \
 --pipeline_config_path=$CONFIG_FILE \
 --trained_checkpoint_prefix=$CHECKPOINT_PATH \
---output_directory=$OUTPUT_DIR \
+--max_detections=${MAX_DETECTIONS} \
+--output_directory=${OUTPUT_DIR} \
 --add_postprocessing_op=true
 
 # Create optimized model by using TOCO(Tensorflow-lite Optimizing Converter)
@@ -39,7 +41,6 @@ bazel run -c opt tensorflow/lite/toco:toco -- \
 --inference_type=QUANTIZED_UINT8 \
 --mean_values=128 \
 --std_values=128 \
---change_concat_input_ranges=false \
 --allow_custom_ops
 
 ##################
@@ -49,13 +50,15 @@ MODEL_NAME=ssd_mobilenet_v2_coco_2018_03_29
 FT_BASE_DIR=${WORKSPACE}/tensorflow/${MODEL_NAME}
 CONFIG_FILE=${FT_BASE_DIR}/pipeline.config
 CHECKPOINT_PATH=${FT_BASE_DIR}/model.ckpt
-OUTPUT_DIR=${WORKSPACE}/tensorflow_lite/${MODEL_NAME}_tflite
+MAX_DETECTIONS=50
+OUTPUT_DIR=${WORKSPACE}/tensorflow_lite/${MODEL_NAME}_tflite_max${MAX_DETECTIONS}
 
 # Create TensorFlow frozen graph with compatible ops that we can use with TensorFlow Lite
 cd ${WORKSPACE}
 python ${TF_MODEL_RESEARCH_PATH}/object_detection/export_tflite_ssd_graph.py \
 --pipeline_config_path=$CONFIG_FILE \
 --trained_checkpoint_prefix=$CHECKPOINT_PATH \
+--max_detections=${MAX_DETECTIONS} \
 --output_directory=$OUTPUT_DIR \
 --add_postprocessing_op=true
 
