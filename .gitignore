@@ -13,3 +13,9 @@ models/object_detection/tensorflow_lite/ssd_mobilenet_v2_quantized_300x300_coco_
 
 # Install files
 install_files/tensorflow-1.11.0-cp35-cp35m-linux_armv7l.whl
+
+# CC
+app/cc/*
+
+# Tempfile
+address_

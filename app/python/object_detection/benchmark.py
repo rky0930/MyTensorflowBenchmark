@@ -75,7 +75,8 @@ def run_object_detection(image_dir, accuracy, max_example_num):
             accuracy.add_raw_data(image_path, boxes, socres, label_ids)
         example_cnt += 1
     avg_inference_t = object_detection.get_average_inference_time()
-    return example_cnt, avg_inference_t
+    first_inference_t = object_detection.get_first_inference_time()
+    return example_cnt, first_inference_t, avg_inference_t
     
 
 if __name__ == "__main__":
@@ -95,15 +96,17 @@ if __name__ == "__main__":
         size_msg = "Model size: {}Mb".format(model_size_mb)
     if mode in ("fps", "all"):
         print("==Start FPS check==")
-        total_example_num, avg_inference_t = \
+        total_example_num, first_inference_t, avg_inference_t = \
             run_object_detection(image_dir, None, config['fps']['max_example_num'])
         fps = round(1 / avg_inference_t, 3) if avg_inference_t != 0 else 0
-        fps_msg = "Average_duration: {} FPS: {} for {} inference".format(avg_inference_t, fps, total_example_num)
+        fps_msg = "first_inference_t: {} avg_inference_t: {} FPS: {} for {}~{} inference".format(
+            first_inference_t, avg_inference_t, fps, 2, total_example_num)
     if mode in ("accuracy", "all"):
         print("==Start accuracy check==")
+        print("Accuracy check object initializing ...")
         accuracy = Accuracy(config['accuracy'])
-        total_example_num, avg_inference_t = \
-            run_object_detection(image_dir, accuracy, config['accuracy']['max_example_num'])
+        print("Accuracy check object Success")
+        run_object_detection(image_dir, accuracy, config['accuracy']['max_example_num'])
         run_accuracy_check(accuracy)
     print(mem_msg)
     print(size_msg)
