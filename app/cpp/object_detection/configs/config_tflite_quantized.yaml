@@ -1,0 +1,25 @@
+benchmark:
+  base_dir: /home/yoon/workspace/repos/git_rky0930/MyTensorflowBenchmark
+  image_dir: dataset/mscoco_val2017_via_format/mscoco_val2017/*
+
+fps:
+  max_example_num: 100
+
+memory_usage:
+  max_example_num: 100
+
+accuracy:
+  base_dir: /home/yoon/workspace/repos/git_rky0930/MyTensorflowBenchmark
+  label_map_file: dataset/mscoco_val2017_via_format/mscoco_label_map.yaml
+  annotation_file: dataset/mscoco_val2017_via_format/mscoco_val2017_region_data.json
+  iou_threshold: 0.3
+  max_example_num: 50
+
+object_detection:
+  base_dir: /home/yoon/workspace/repos/git_rky0930/MyTensorflowBenchmark
+  tflite: True    # True | False
+  quantized: True # True | False
+  checkpoint: models/object_detection/tensorflow_lite/ssd_mobilenet_v2_quantized_300x300_coco_2019_01_03_tflite_max50/detect.tflite
+  label_map_file: dataset/mscoco_val2017_via_format/mscoco_label_map.yaml
+  confidence_score_threshold: 0.5
+  inference_result_file: mscoco_val2017_inference_result.json
