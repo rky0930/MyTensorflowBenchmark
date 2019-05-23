@@ -2,7 +2,7 @@
 
 void free_buffer(void* data, size_t length) { free(data); }
 
-TF_Tensor* CreateTensor(TF_DataType data_type,
+TF_Tensor* create_tensor(TF_DataType data_type,
                         const std::int64_t* dims, std::size_t num_dims,
                         const void* data, std::size_t len) {
   if (dims == nullptr || data == nullptr) {
@@ -12,21 +12,21 @@ TF_Tensor* CreateTensor(TF_DataType data_type,
   if (tensor == nullptr) {
     return nullptr;
   }
-  // void* tensor_data = TF_TensorData(tensor);
-  // if (tensor_data == nullptr) {
-  //   TF_DeleteTensor(tensor);
-  //   return nullptr;
-  // }
-  // std::memcpy(tensor_data, data, std::min(len, TF_TensorByteSize(tensor)));
   std::memcpy(TF_TensorData(tensor), data, std::min(len, TF_TensorByteSize(tensor)));
   return tensor;
 }
 
-ObjectDetection::ObjectDetection(std::string frozen_graph_path, float confidence_score_threshold, 
-                                 int max_detections) {
-  this->frozen_graph_path = frozen_graph_path;
-  this->confidence_score_threshold = confidence_score_threshold;
-  this->max_detections = max_detections;
+
+ObjectDetection::ObjectDetection(YAML::Node config, bool save_inference_result_flag) {
+  std::string base_dir = config["base_dir"].as<std::string>();
+  std::string checkpoint = config["checkpoint"].as<std::string>();
+  this->frozen_graph_path = base_dir + "/" + checkpoint;
+  this->confidence_score_threshold = config["confidence_score_threshold"].as<float>();
+  this->max_detections = config["max_detections"].as<int>();
+  this->save_inference_result = save_inference_result_flag;
+  if (this->save_inference_result) {
+    this->inference_result_file = config["inference_result_file"].as<std::string>();
+  }
 }
 
 void ObjectDetection::init() {
@@ -35,7 +35,7 @@ void ObjectDetection::init() {
 
 void ObjectDetection::set_graph() {
   std::cout<<"Load Model: "<<this->frozen_graph_path<<std::endl;
-  this->graph_def = this->read_file(this->frozen_graph_path);
+  this->graph_def = this->read_graph(this->frozen_graph_path);
   this->graph = TF_NewGraph();
   this->graph_status = TF_NewStatus();
   this->graph_opts = TF_NewImportGraphDefOptions();
@@ -85,7 +85,7 @@ void ObjectDetection::preprocessing(IplImage* src, IplImage* dst) {
   cvCvtColor(src, dst, CV_BGR2RGB);
 }
 
-OD_Result ObjectDetection::sess_run(IplImage* img) {
+OD_Result_raw ObjectDetection::sess_run(IplImage* img) {
   ResetOutputValues();
   // Create input variable
   int img_width = img->width;
@@ -97,7 +97,7 @@ OD_Result ObjectDetection::sess_run(IplImage* img) {
   if (this->verbose) {
     std::cout<<"image_tensor_size: "<<image_tensor_size<<std::endl;
   }
-  TF_Tensor* input_value = CreateTensor(TF_UINT8,
+  TF_Tensor* input_value = create_tensor(TF_UINT8,
                                         input_dims.data(), input_dims.size(),
                                         img->imageData, image_tensor_size);
   // TF_Tensor* input_values[1] = {input_value};
@@ -134,17 +134,17 @@ OD_Result ObjectDetection::sess_run(IplImage* img) {
                 outputs_ptr, output_values_ptr, this->output_ops.size(),
                 nullptr, 0, nullptr, this->sess_status);
   
-  OD_Result od_result; 
-  od_result.boxes = (float*)TF_TensorData(output_values[0]);
-  od_result.scores = (float*)TF_TensorData(output_values[1]);
-  od_result.label_ids = (float*)TF_TensorData(output_values[2]);
-  od_result.num_detections = (float*)TF_TensorData(output_values[3]);
+  OD_Result_raw od_result_raw;
+  od_result_raw.boxes = (float*)TF_TensorData(output_values[0]);
+  od_result_raw.scores = (float*)TF_TensorData(output_values[1]);
+  od_result_raw.label_ids = (float*)TF_TensorData(output_values[2]);
+  od_result_raw.num_detections = (float*)TF_TensorData(output_values[3]);
   TF_DeleteTensor(boxes_value);
   TF_DeleteTensor(scores_value);
   TF_DeleteTensor(classes_value);
   TF_DeleteTensor(num_detections_value);
   DeleteInputValues();
-  return od_result;
+  return od_result_raw;
 }
 
 OD_Result ObjectDetection::run(const char* img_path) {
@@ -156,9 +156,6 @@ OD_Result ObjectDetection::run(const char* img_path) {
   }
   if (this->verbose) {
     std::cout<<"First pixel: (";
-    // std::cout<<(uint8_t)img->imageData[0]<<", ";
-    // std::cout<<(uint8_t)img->imageData[1]<<", ";
-    // std::cout<<(uint8_t)img->imageData[2]<<")"<<std::endl;;
     std::cout<<unsigned((uint8_t)img->imageData[0])<<", ";
     std::cout<<unsigned((uint8_t)img->imageData[1])<<", ";
     std::cout<<unsigned((uint8_t)img->imageData[2])<<")"<<std::endl;;
@@ -176,32 +173,45 @@ OD_Result ObjectDetection::run(const char* img_path) {
     std::cout<<"img->widthStep: "<<img->widthStep<<std::endl;
   }
   this->preprocessing(img, img);
+  OD_Result_raw od_result_raw;
   OD_Result od_result;
-  od_result = this->sess_run(img);
-  od_result = this->postprocessing(img, od_result);
+  od_result_raw = this->sess_run(img);
+  od_result = this->postprocessing(img, od_result_raw);
   cvReleaseImage(&img);
+  if (save_inference_result) {
+    this->add_annotation(img_path, od_result);
+  }
   return od_result;
 }
 
-OD_Result ObjectDetection::postprocessing(IplImage* img, OD_Result od_result) {
+OD_Result ObjectDetection::postprocessing(IplImage* img, OD_Result_raw od_result_raw) {
   int img_width = img->width;
   int img_height = img->height;
   int img_channel = img->nChannels;  
-  int num_detections = (int)od_result.num_detections[0];
-  int box_cnt = 0; 
+  int num_detections = (int)od_result_raw.num_detections[0];
+  int box_cnt = 0;
+  OD_Result od_result;
+  Box box;
   for (int i=0; i<num_detections; i++) {
-    if (od_result.scores[i] >= 0.5) {
-      int xmin = (int)(od_result.boxes[i*4+1] * img_width);
-      int ymin = (int)(od_result.boxes[i*4+0] * img_height);
-      int xmax = (int)(od_result.boxes[i*4+3] * img_width);
-      int ymax = (int)(od_result.boxes[i*4+2] * img_height);
+    if (od_result_raw.scores[i] >= 0.5) {
+      box.xmin = (int)(od_result_raw.boxes[i*4+1] * img_width);
+      box.ymin = (int)(od_result_raw.boxes[i*4+0] * img_height);
+      box.xmax = (int)(od_result_raw.boxes[i*4+3] * img_width);
+      box.ymax = (int)(od_result_raw.boxes[i*4+2] * img_height);
+
       if (this->visible) {
-        cvRectangle(img, cvPoint(xmin, ymin), cvPoint(xmax, ymax), CV_RGB(0, 255, 255));
+        cvRectangle(img, cvPoint(box.xmin, box.ymin), cvPoint(box.xmax, box.ymax), CV_RGB(0, 255, 255));
       }
-      std::cout<<"Box_"<<box_cnt<<"("<<od_result.scores[i]<<", "<<od_result.label_ids[i]<<"): ["<<xmin<<", "<<ymin<<", "<<xmax<<", "<<ymax<<"]"<<std::endl;
+      std::cout<<"Box_"<<box_cnt<<"("<<od_result_raw.scores[i]<<", "<<od_result_raw.label_ids[i]<<"): [" \
+               <<box.xmin<<", "<<box.ymin<<", "<<box.xmax<<", "<<box.ymax<<"]"<<std::endl;
       box_cnt++;
+      od_result.boxes.push_back(box);
+      od_result.scores.push_back(od_result_raw.scores[i]);
+      od_result.label_ids.push_back(od_result_raw.label_ids[i]);
     }
   }
+  od_result.num_detections = box_cnt;
+
   std::cout<<"Total box number: "<<box_cnt<<std::endl;
   if (this->visible) {
     cvShowImage("Drawing Graphics", img);
@@ -210,7 +220,7 @@ OD_Result ObjectDetection::postprocessing(IplImage* img, OD_Result od_result) {
   return od_result;
 }
 
-TF_Buffer* ObjectDetection::read_file(std::string path) {
+TF_Buffer* ObjectDetection::read_graph(std::string path) {
   const char* file = path.c_str();
   FILE *f = fopen(file, "rb");
   fseek(f, 0, SEEK_END);
@@ -220,7 +230,7 @@ TF_Buffer* ObjectDetection::read_file(std::string path) {
   void* data = malloc(fsize);
   fread(data, fsize, 1, f);
   fclose(f);
-
+  this->model_size = fsize;
   TF_Buffer* buf = TF_NewBuffer();
   buf->data = data;
   buf->length = fsize;
@@ -240,6 +250,108 @@ void ObjectDetection::ResetOutputValues() {
     if (output_values[i] != nullptr) TF_DeleteTensor(output_values[i]);
   }
   output_values.clear();
+}
+
+void ObjectDetection::add_annotation(const char* img_path, OD_Result od_result) {
+  Json::Value annotation;
+  std::string img_path_str = std::string(img_path);
+  std::string filename = img_path_str.substr(img_path_str.find_last_of("/\\") + 1);
+  int file_size = get_image_size(img_path);
+  std::string annotation_id = filename+std::to_string(file_size);
+  annotation["fileref"] = "";
+  annotation["base64_img_data"] = "";
+  annotation["size"] = file_size;
+  annotation["filename"] = filename.c_str();
+  Json::Value regions = raw_to_regions(od_result);
+  annotation["regions"] = regions;
+  this->annotations[annotation_id] = annotation;
+}
+
+Json::Value ObjectDetection::raw_to_regions(OD_Result od_result) {
+  std::string label_name;
+  Json::Value regions;
+  Json::Value region;
+  Json::Value shape_attributes; 
+  Json::Value region_attributes; 
+  Json::Value sub_region_attributes; 
+  std::string box_cnt_str;
+  std::string label_id_str; 
+  for (int i=0; i<od_result.num_detections; i++) {
+    shape_attributes["name"] = "rect";
+    shape_attributes["x"] = od_result.boxes[i].xmin;
+    shape_attributes["y"] = od_result.boxes[i].ymin;
+    shape_attributes["width"] = od_result.boxes[i].xmax - od_result.boxes[i].xmin;
+    shape_attributes["height"] = od_result.boxes[i].ymax - od_result.boxes[i].ymin;
+    sub_region_attributes["0"] = od_result.label_ids[i];
+    region_attributes["display_name"] = sub_region_attributes;
+    region["shape_attributes"] = shape_attributes;
+    region["region_attributes"] = region_attributes;
+    box_cnt_str = std::to_string(i);
+    regions[box_cnt_str.c_str()] = region;
+  }
+  return regions;
+}
+
+void ObjectDetection::write_to_file() {
+  Json::StyledWriter writer; 
+  std::string output_anno = writer.write(this->annotations); 
+  const char* buffer = output_anno.c_str();
+  int len = output_anno.length();
+  FILE* fp = fopen(this->inference_result_file.c_str(), "wb");
+  if(fp == nullptr) {
+    exit(1);
+  } 
+  size_t fileSize = fwrite(buffer, 1, len, fp);
+  fclose(fp);
+}
+ 
+long ObjectDetection::get_model_size() {
+  return this->model_size;
+}
+
+int ObjectDetection::get_image_size(const char* img_path) // path to file
+{
+    FILE *p_file = NULL;
+    p_file = fopen(img_path, "rb");
+    fseek(p_file,0,SEEK_END);
+    int size = ftell(p_file);
+    fclose(p_file);
+    return size;
+}
+
+void ObjectDetection::process_mem_usage(double& vm_usage, double& resident_set) {
+   using std::ios_base;
+   using std::ifstream;
+   using std::string;
+
+   vm_usage     = 0.0;
+   resident_set = 0.0;
+
+   // 'file' stat seems to give the most reliable results
+   //
+   ifstream stat_stream("/proc/self/stat",ios_base::in);
+
+   // dummy vars for leading entries in stat that we don't care about
+   //
+   string pid, comm, state, ppid, pgrp, session, tty_nr;
+   string tpgid, flags, minflt, cminflt, majflt, cmajflt;
+   string utime, stime, cutime, cstime, priority, nice;
+   string O, itrealvalue, starttime;
+
+   // the two fields we want
+   //
+   unsigned long vsize;
+   long rss;
+   stat_stream >> pid >> comm >> state >> ppid >> pgrp >> session >> tty_nr
+               >> tpgid >> flags >> minflt >> cminflt >> majflt >> cmajflt
+               >> utime >> stime >> cutime >> cstime >> priority >> nice
+               >> O >> itrealvalue >> starttime >> vsize >> rss; // don't care about the rest
+
+   stat_stream.close();
+   long page_size_kb = sysconf(_SC_PAGE_SIZE) / 1024; // in case x86-64 is configured to use 2MB pages
+
+   vm_usage     = vsize / 1024.0;
+   resident_set = rss * page_size_kb;
 }
 
 void ObjectDetection::close() {

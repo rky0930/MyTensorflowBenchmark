@@ -28,13 +28,13 @@ CXX=g++
 RM=rm -f
 CPPFLAGS=-g -Wall -Wextra -std=c++0x
 LDFLAGS=
-LDLIBS=-ltensorflow $(shell pkg-config --cflags --libs opencv)
-TARGET=object_detection
+LDLIBS=-ltensorflow -lyaml-cpp -ljsoncpp $(shell pkg-config --cflags --libs opencv)
+TARGET=benchmark
 
-SRCS=object_detection.cpp main.cpp
+SRCS=object_detection.cpp utils/config_tools.cpp benchmark.cpp
 OBJS=$(subst .cpp,.o,$(SRCS))
 
-all: object_detection
+all: benchmark
 
 $(TARGET): $(OBJS)
 	$(CXX) -o $(TARGET) $(OBJS) $(LDLIBS) 

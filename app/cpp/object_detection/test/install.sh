@@ -1,5 +1,5 @@
-sudo apt install libyaml-cpp-dev
-sudo apt install libjsoncpp-dev
+apt install libyaml-cpp-dev
+apt install libjsoncpp-dev
 ldconfig
 
 c++ -o test_yaml test_yaml.cpp -lyaml-cpp
