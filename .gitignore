@@ -5,17 +5,8 @@
 dataset/mscoco_val2017_via_format*
 
 # Models
-models/classification/tensorflow_lite/mobilenet_v2_1.0_224*
 models/object_detection/tensorflow/ssd_mobilenet_v2_coco_2018_03_29*
 models/object_detection/tensorflow/ssd_mobilenet_v2_quantized_300x300_coco_2019_01_03*
 models/object_detection/tensorflow_lite/ssd_mobilenet_v2_coco_2018_03_29_tflite*
 models/object_detection/tensorflow_lite/ssd_mobilenet_v2_quantized_300x300_coco_2019_01_03_tflite*
-
-# Install files
-install_files/tensorflow-1.11.0-cp35-cp35m-linux_armv7l.whl
-
-# CC
-app/cc/*
-
-# Tempfile
-address_
+models/object_detection/tensorflow_lite/coco_ssd_mobilenet_v1_1.0_quant_2018_06_29.zip

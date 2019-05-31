@@ -7,7 +7,7 @@ import tensorflow as tf
 from utils.label_map_tools import load_label_map
 
 class ObjectDetection(object):
-    def __init__(self, config, save_inference_result=False, verbose=False):
+    def __init__(self, config, save_inference_result_flag=False, verbose=False):
         # Model
         self.model_path = os.path.join(config['base_dir'], config['checkpoint'])
         self.confidence_score_threshold = config['confidence_score_threshold']    
@@ -24,11 +24,11 @@ class ObjectDetection(object):
         self.inference_counter = 0
         self.first_inference_t = 0
         self.total_inference_t = 0
-        self.save_inference_result = save_inference_result
-        if save_inference_result:
-            print("save_inference_result:", save_inference_result)
+        self.save_inference_result_flag = save_inference_result_flag
+        if save_inference_result_flag:
+            print("save_inference_result_flag:", save_inference_result_flag)
             self.inference_result = {}
-            self.inference_result_file = config['inference_result_file']
+            self.inference_result_file = config['save_inference_result']['file']
         self.verbose = verbose
     def set_model_size(self):
         if os.path.isdir(self.model_path):
@@ -129,7 +129,7 @@ class ObjectDetection(object):
             print("object detection.py | {}".format(message))
         pass 
         
-    def run(self, image_path):
+    def run(self, image_path, save_flag):
         # Get image
         self._print("run")
         image = cv2.imread(image_path)
@@ -150,7 +150,7 @@ class ObjectDetection(object):
         self._print("inference_counter: {}".format(self.inference_counter))
         boxes, scores, label_ids = self.postprocessing(boxes, scores, label_ids)
         self._print("postprocessing done")
-        if self.save_inference_result:
+        if save_flag:
             self.add_annotation(image_path, boxes, label_ids)
             self._print("add_annotation done")
         return boxes, scores, label_ids
@@ -213,6 +213,6 @@ class ObjectDetection(object):
         return regions    
 
     def write_to_file(self):
-        with open(self.inference_result_file, "w") as ret_fid:
-            json.dump(self.inference_result, ret_fid, ensure_ascii=False)
+        with open(self.inference_result_file, "w") as fid:
+            json.dump(self.inference_result, fid, ensure_ascii=False)
         print("Inference result file is created: {}".format(self.inference_result_file))

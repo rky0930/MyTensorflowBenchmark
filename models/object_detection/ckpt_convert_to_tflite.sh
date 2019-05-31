@@ -8,7 +8,7 @@ export TF_MODEL_RESEARCH_PATH=/home/yoon/workspace/toast_cam_v2/models/research
 export PYTHONPATH=$PYTHONPATH:$TF_MODEL_RESEARCH_PATH:$TF_MODEL_RESEARCH_PATH/slim
 # export TF_SRC_PATH= <TENSORFLOW_SOURCE_CODE_PATH>
 export TF_SRC_PATH=/home/yoon/workspace/toast_cam_v2/tf_1_3_tflite_convert
-export WORKSPACE=/media/yoon/hdd1/workspace/repos/git_rky0930/MyTensorflowBenchmark/models/object_detection # initalize MyTensorflowBenchmakr/models/objectdtecion path
+export WORKSPACE=/media/yoon/hdd1/workspace/repos/rky0930/MyTensorflowBenchmark/models/object_detection # initalize MyTensorflowBenchmakr/models/objectdtecion path
 
 ###################
 # Quantized model #

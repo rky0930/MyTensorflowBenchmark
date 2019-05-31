@@ -9,19 +9,13 @@ from utils.label_map_tools import load_label_map
 from utils.label_map_tools import convert_label_map
 
 class Accuracy:
-    def __init__(self, config):
+    def __init__(self, config, dt_annotation_path):
         label_map_path = os.path.join(config['base_dir'], config['label_map_file'])
-        annotation_path = os.path.join(config['base_dir'], config['annotation_file'])
-        self.load_annotation(annotation_path)        
+        gt_annotation_path = os.path.join(config['base_dir'], config['annotation_file'])
+        self.gt_annotations = self.load_annotation(gt_annotation_path)
+        self.dt_annotations = self.load_annotation(dt_annotation_path)
         self.load_label_map(label_map_path)
         self.iou_threshold = config['iou_threshold']
-        self.raw_data_list = []
-
-    def add_raw_data(self, image_path, boxes, socres, label_ids):
-        image_name = os.path.basename(image_path)
-        image_size = os.path.getsize(image_path)
-        raw_data = (image_name, image_size, boxes, socres, label_ids)
-        self.raw_data_list.append(raw_data)
 
     def load_label_map(self, label_map_path):
         self.attribute, self.label_id_to_name = load_label_map(label_map_path)
@@ -30,15 +24,23 @@ class Accuracy:
     def load_annotation(self, annotation_path):
         with open(annotation_path, 'r') as stream:
             try:
-                self.annotations = yaml.safe_load(stream)
+                return yaml.safe_load(stream)
             except yaml.YAMLError as exc:
                 print(exc)
 
-    def get_gt_raw_data(self, image_name, image_size):
-        if self.annotations is None:
+    def get_gt_annotation(self, anno_key):
+        if self.gt_annotations is None:
             print("No annotation data")
-        anno_key = "{}{}".format(image_name, image_size)
-        regions = self.annotations[anno_key]['regions']
+        regions = self.gt_annotations[anno_key]['regions']
+        return self.annotation_to_raw_data(regions)
+
+    def get_dt_annotation(self, anno_key):
+        if self.dt_annotations is None:
+            print("No annotation data")
+        regions = self.dt_annotations[anno_key]['regions']
+        return self.annotation_to_raw_data(regions)
+
+    def annotation_to_raw_data(self, regions):
         boxes = []
         label_ids = []
         for r_idx, attr in regions.items():
@@ -119,8 +121,14 @@ class Accuracy:
         total_gt_counter = Counter()
         total_dt_counter = Counter()
         total_gt_found = Counter()
-        for image_name, image_size, dt_boxes, dt_socres, dt_label_ids in self.raw_data_list:
-            gt_boxes, gt_label_ids = self.get_gt_raw_data(image_name, image_size)
+        example_cnt = 0
+        for anno_key in self.gt_annotations.keys():
+            try:
+                dt_boxes, dt_label_ids = self.get_dt_annotation(anno_key)
+            except KeyError as e:
+                print("Key Error: No detection result of {}.".format(e))
+                continue
+            gt_boxes, gt_label_ids = self.get_gt_annotation(anno_key)
             gt_counter, dt_counter, gt_found = \
                 self.iou_check(gt_boxes, gt_label_ids, dt_boxes, dt_label_ids)
             if print_raw_data:
@@ -129,6 +137,7 @@ class Accuracy:
             total_gt_counter += gt_counter
             total_dt_counter += dt_counter
             total_gt_found   += gt_found
+            example_cnt += 1
         if len(gt_counter) == 0:
             precision = 0
             recall = 0
@@ -139,12 +148,6 @@ class Accuracy:
         if print_raw_data:
             print("Total")
             print_result(total_gt_counter, total_dt_counter, total_gt_found, label_name)
-        print("Precision(%s, %1.2f): %f"%(label_name, self.iou_threshold, precision))
-        print("Recall(%s, %1.2f): %f"%(label_name, self.iou_threshold, recall))
+        print("Precision(%d, %s, %1.2f): %f"%(example_cnt, label_name, self.iou_threshold, precision))
+        print("Recall(%d, %s, %1.2f): %f"%(example_cnt, label_name, self.iou_threshold, recall))
         return precision, recall
-
-    # def AP(self):
-    #     pass
-    
-    # def mAP(self):
-    #     pass
