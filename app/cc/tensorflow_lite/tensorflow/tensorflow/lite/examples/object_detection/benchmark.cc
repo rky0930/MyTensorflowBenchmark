@@ -16,7 +16,8 @@ int visible_flag = 0;
 int save_inference_result_flag = 0;
 
 void help(char *argv) {
-    std::cout<<"Usage : "<<argv<<" --(f)rozen_graph_path --(i)mage_path [--(c)onfidence_score_threshold] [--(m)ax_detections] [--(v)erbose] [--(s)how]"<<std::endl;
+    std::cout<<"Usage : "<<argv<<" --(h)elp"<<std::endl;
+    std::cout<<"Usage : "<<argv<<" --(c)onfig --(m)odel [--(v)erbose] [--(s)how]"<<std::endl;
     exit(0);
 }
 
