@@ -8,7 +8,7 @@ import numpy as np
 import subprocess
 import psutil
 from utils.config_tools import load_config
-from object_detection import ObjectDetection
+from libs.object_detection import ObjectDetection
 
 arg_help_msg = """
     1) Benchmark FPS \\

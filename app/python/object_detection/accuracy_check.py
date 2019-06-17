@@ -1,5 +1,5 @@
 import argparse
-from accuracy import Accuracy
+from libs.accuracy import Accuracy
 from utils.config_tools import load_config
 
 arg_help_msg = """
