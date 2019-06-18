@@ -17,7 +17,6 @@ My Tensorflow Benchmark
     - 16Gb RAM
     - Ubuntu
    - Raspberry Pi 3B+
-   - Raspberry Pi 3B+ with EdgeTPU
    - Nvidia Jetson NANO
 3. TensorFlow APIs
   - TF + Python
