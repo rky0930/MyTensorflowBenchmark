@@ -25,9 +25,8 @@ My Tensorflow Benchmark
   - TF-Lite + Python
   - TF-Lite + C++
 4. Checking 
-  - FPS
-  - Time per one inference
-  - Loading Time
+  - Time per one inference(First, Average)
+  - Model Size
   - Memory Usage
   - Accuracy
     - Object Detection
