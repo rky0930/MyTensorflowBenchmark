@@ -1,4 +1,4 @@
-echo "----------------------TFLITE FLOAT-------------------------"
+echo "----------------------TF FLOAT-------------------------"
 python benchmark.py -c=configs/config_tf.yaml
 python accuracy_check.py -c=configs/config_tf.yaml -d=mscoco_val2017_inference_result.json
 echo "----------------------TFLITE FLOAT-------------------------"
