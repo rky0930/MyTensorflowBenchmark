@@ -2,7 +2,7 @@
 This is Persoanl TensorFlow benchmark. It's not a official.  
 Some result is not really correct but we can think that's more realistic.  
 All source code and environment is included in this repo.  
-You can build your own and reproduce your benchmark.  
+You can build your own benchmark tools and reproduce the result.  
 Question/PR/Issues and benchmark of another environmen, ramework is Welcome.    
 
 ### Google spreadsheet
