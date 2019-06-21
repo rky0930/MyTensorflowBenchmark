@@ -1,4 +1,5 @@
 ### TensorFlow & TensorFlow-Lite Python API Benchmark App
+#### Run
 ```console
 # Run Benchmark
 python benchmark.py -c=configs/<config_file>
@@ -6,4 +7,8 @@ python benchmark.py -c=configs/<config_file>
 python accuracy_check.py -c=configs/<config_file> -d=<Inference Result(.json)>
 # Run all kind of TFs
 ./run.sh
+```
+#### Build (=install necessary libraray)
+```bash
+pip install -r requirements.txt
 ```
