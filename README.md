@@ -4,7 +4,12 @@
  - [google spreadsheet link](https://docs.google.com/spreadsheets/d/1c6aFzBUg2X9_EmMgAaPeV_Yn6-wrXbCGIaexmatnhi0/edit?usp=sharing)
 
 ### Benchmark tool
-All benchmark source code is under app directory
+#### Run
+ - [TensorFlow/TensorFlow-Lite - Python API](app/python) 
+ - [TensorFlow/TensorFlow-Lite - C/C++ API](app/cc#tensorflow--tensorflow-lite-cc-api-benchmark-app)
+ 
+#### Build
+You can build all benchmark tool with source code in this repo.
  - [TensorFlow/TensorFlow-Lite - Python API](app/python) 
  - [TensorFlow - C API](app/cc/src#tensorflow-c-api)
  - [TensorFlow-Lite - C++ API](app/cc/src#tensorflow-lite-aarch64armv7l-c-benchmark-tool)
