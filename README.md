@@ -1,4 +1,4 @@
-# MyTensorflowBenchmark
+# My Tensorflow Benchmark
 This is My TensorFlow benchmark.  
 All source code and environment are included in this repo.   
 You can build your own benchmark tools and you can try to reproduce the results.  
