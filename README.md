@@ -22,7 +22,7 @@ Question/PR/Issues are welcome
  - TensorFlow-Lite
 
 ### Tested Precision
- - Floating
+ - Floating32
  - Int8
  
 ### Google spreadsheet
