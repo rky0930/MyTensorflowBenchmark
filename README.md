@@ -1,6 +1,5 @@
 # MyTensorflowBenchmark
 This is My TensorFlow benchmark.  
-Maybe there is some mistake, but more realistic to me.  
 All source code and environment are included in this repo.   
 You can build your own benchmark tools and you can try to reproduce the results.  
 Question/PR/Issues are welcome
