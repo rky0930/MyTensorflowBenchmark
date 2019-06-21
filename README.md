@@ -4,6 +4,27 @@ All source code and environment are included in this repo.
 You can build your own benchmark tools and you can try to reproduce the results.  
 Question/PR/Issues are welcome
 
+### Tested Language
+ - Python
+ - C/C++
+
+### Tested Accelerator
+ - Nvidia RTX2080 (8Gb)
+ - GeForce GTX 1050 Mobile (4Gb)
+ - AMD Ryzen 2700 
+ - Intel(R) Core(TM) i7-7700HQ CPU @ 2.80GHz
+ - 128-core NVIDIA Maxwell™ architecture-based GPU
+ - Quad-core ARM® A57
+ - ARM Cortex-A53 1.4GHz
+
+### Tested Framework
+ - TensorFlow
+ - TensorFlow-Lite
+
+### Tested Precision
+ - Floating
+ - Int8
+ 
 ### Google spreadsheet
  - [google spreadsheet link](https://docs.google.com/spreadsheets/d/1c6aFzBUg2X9_EmMgAaPeV_Yn6-wrXbCGIaexmatnhi0/edit?usp=sharing)
 
