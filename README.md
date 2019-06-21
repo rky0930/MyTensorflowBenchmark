@@ -8,7 +8,7 @@ Question/PR/Issues are welcome
  - Python
  - C/C++
 
-### Tested Accelerator
+### Tested CPU & GPU
  - Nvidia RTX2080 (8Gb)
  - GeForce GTX 1050 Mobile (4Gb)
  - AMD Ryzen 2700 
