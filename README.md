@@ -4,6 +4,9 @@ All source code and environment are included in this repo.
 You can build your own benchmark tools and you can try to reproduce the results.  
 Question/PR/Issues are welcome
 
+### Result Screent Shot (2019/06/24)
+<img src="screenshot/Screenshot%20from%202019-06-21%2019-49-30.png">
+
 ### Tested Language
  - Python
  - C/C++
@@ -45,7 +48,4 @@ You can build all benchmark tool using the source code in this repo.
 
 ### Models
 [SSD Mobilenet v2](models)
-
-### Result Screent Shot (2019/06/24)
-<img src="screenshot/Screenshot%20from%202019-06-21%2019-49-30.png">
 
