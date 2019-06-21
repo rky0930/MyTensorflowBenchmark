@@ -1,9 +1,9 @@
 # MyTensorflowBenchmark
-This is Persoanl TensorFlow benchmark. It's not a official.  
-Some result is not really correct but we can think that's more realistic.  
-All source code and environment is included in this repo.  
-You can build your own benchmark tools and reproduce the result.  
-Question/PR/Issues and benchmark of another environmen, ramework is Welcome.    
+This is My TensorFlow benchmark.  
+Maybe there is some mistake, but more realistic to me. 
+All source code and environment are included in this repo.  
+You can build your own benchmark tools and you can try to reproduce the results.  
+Question/PR/Issues are welcome
 
 ### Google spreadsheet
  - [google spreadsheet link](https://docs.google.com/spreadsheets/d/1c6aFzBUg2X9_EmMgAaPeV_Yn6-wrXbCGIaexmatnhi0/edit?usp=sharing)
