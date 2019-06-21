@@ -47,5 +47,5 @@ You can build all benchmark tool using the source code in this repo.
 [SSD Mobilenet v2](models)
 
 ### Result Screent Shot (2019/06/24)
-<img src="img/Screenshot from 2019-06-21 15-12-11.png">
+<img src="screenshot/Screenshot%20from%202019-06-21%2019-49-30.png">
 
