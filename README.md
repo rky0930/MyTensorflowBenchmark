@@ -15,7 +15,7 @@ Question/PR/Issues and benchmark of another environmen, ramework is Welcome.
  
 #### Build
 You can build all benchmark tool with source code in this repo.
- - [TensorFlow/TensorFlow-Lite - Python API](app/python) 
+ - [TensorFlow/TensorFlow-Lite - Python API](app/python)  
  - [TensorFlow - C API](app/cc/src#tensorflow-c-api)
  - [TensorFlow-Lite - C++ API](app/cc/src#tensorflow-lite-aarch64armv7l-c-benchmark-tool)
 
