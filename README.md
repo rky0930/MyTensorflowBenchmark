@@ -19,14 +19,26 @@ Question/PR/Issues are welcome
  - 128-core NVIDIA Maxwell™ architecture-based GPU
  - Quad-core ARM® A57
  - ARM Cortex-A53 1.4GHz
-
-### Tested Framework
+ 
+### Tested Framework 
  - TensorFlow
  - TensorFlow-Lite
 
-### Tested Precision
- - Floating32
- - Int8
+### Tested Archtecture + CPU/GPU + Framework + Language + Precision
+ - x86_64 + TensorFlow + GPU + Python API + Float32
+ - x86_64 + TensorFlow + CPU + Python API + Float32
+ - x86_64 + TensorFlow + GPU + C API + Float32
+ - x86_64 + TensorFlow + CPU + C API + Float32
+ - x86_64 + TensorFlow-Lite + CPU + Python API + Float32
+ - x86_64 + TensorFlow-Lite + CPU + Python API + Int8
+ - aarch64 + TensorFlow + GPU + Python API + Float32
+ - aarch64 + TensorFlow-Lite + CPU + Python API + Float32
+ - aarch64 + TensorFlow-Lite + CPU + Python API + Int8
+ - aarch64 + TensorFlow-Lite + CPU + C++ API + Float32
+ - aarch64 + TensorFlow-Lite + CPU + C++ API + Int8
+ - armv7l + TensorFlow + CPU + Python API + Float32
+ - armv7l + TensorFlow-Lite + CPU + C++ API + Float32
+ - armv7l + TensorFlow-Lite + CPU + C++ API + Int8
  
 ### Google spreadsheet
  - [google spreadsheet link](https://docs.google.com/spreadsheets/d/1c6aFzBUg2X9_EmMgAaPeV_Yn6-wrXbCGIaexmatnhi0/edit?usp=sharing)
