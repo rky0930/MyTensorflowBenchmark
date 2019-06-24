@@ -1,7 +1,7 @@
 # My Tensorflow Benchmark
 This is My TensorFlow benchmark.  
 All source code and environment are included in this repo.   
-You can build your own benchmark tools and you can try to reproduce the results.  
+You can make your own benchmark tools and try to reproduce the results.  
 Question/PR/Issues are welcome  
 - [한글](README_korean.md)
 ### Result Screent Shot (2019/06/24)
