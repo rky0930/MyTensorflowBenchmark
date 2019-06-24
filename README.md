@@ -1,6 +1,6 @@
 # My Tensorflow Test
 This is My TensorFlow Test.  
-You can reproduce this result using my source code. 
+You can reproduce this result using my source code.   
 All used source code and environment are included in this repo.   
 Question/PR/Issues are always welcome  
 - [한글](README_korean.md)
