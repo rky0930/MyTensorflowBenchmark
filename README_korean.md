@@ -44,7 +44,7 @@
 ### Google spreadsheet
  - [google spreadsheet link](https://docs.google.com/spreadsheets/d/1c6aFzBUg2X9_EmMgAaPeV_Yn6-wrXbCGIaexmatnhi0/edit?usp=sharing)
 
-### Benchmark tool
+### My tool
 #### Run
  - [TensorFlow/TensorFlow-Lite - Python API](app/python) 
  - [TensorFlow/TensorFlow-Lite - C/C++ API](app/cc#tensorflow--tensorflow-lite-cc-api-benchmark-app)
