@@ -2,6 +2,7 @@
 이 Repo는 개인적인 TensorFlow Benchmark 입니다.   
 제가 측정한 데이터를 Reproduce할 수 있도록 성능 측정에 사용된 모든 코드는 공개되어있습니다.  
 질문/PR/Issue 보내주시는건 언제든지 환영입니다.  
+- [english](README.md)
 
 
 ### Result Screent Shot (2019/06/24)
