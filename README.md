@@ -1,8 +1,8 @@
-# My Tensorflow Benchmark
-This is My TensorFlow benchmark.  
-All source code and environment are included in this repo.   
-You can make your own benchmark tools and try to reproduce the results.  
-Question/PR/Issues are welcome  
+# My Tensorflow Test
+This is My TensorFlow Test.  
+You can reproduce this result using my source code. 
+All used source code and environment are included in this repo.   
+Question/PR/Issues are always welcome  
 - [한글](README_korean.md)
 ### Result Screent Shot (2019/06/24)
 <img src="screenshot/Screenshot.png">
