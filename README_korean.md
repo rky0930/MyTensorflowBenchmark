@@ -1,6 +1,6 @@
-# My Tensorflow Benchmark
-개인적인 TensorFlow Benchmark 입니다.   
-제가 측정한 결과를 Reproduce할 수 있도록 성능 측정에 사용된 모든 코드는 이 Repo에 공개되어있습니다.  
+# My Tensorflow Test
+개인적인 TensorFlow Test 입니다.   
+성능 측정에 사용된 모든 코드는 이 Repo에 공개되어있습니다.  
 질문/PR/Issue 언제든지 환영입니다.  
 - [english](README.md)
 
