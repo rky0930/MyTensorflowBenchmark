@@ -12,7 +12,7 @@
 ```bash
 # CPU
 docker pull rky0930/c_api:opencv
-nvidia-docker run -it -v <your_source_dir>:<your_source_dir> rky0930/c_api:opencv /bin/bash
+docker run -it -v <your_source_dir>:<your_source_dir> rky0930/c_api:opencv /bin/bash
 # GPU
 docker pull rky0930/c_api:cuda-10-cudnn7-opencv
 docker run --runtime=nvidia -it -v <your_source_dir>:<your_source_dir> rky0930/c_api:cuda-10-cudnn7-opencv /bin/bash
