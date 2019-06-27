@@ -1,5 +1,5 @@
-# My Tensorflow Test
-개인적인 TensorFlow Test 입니다.   
+# My Tensorflow Benchmark
+개인적인 TensorFlow Benchmark 입니다.   
 성능 측정에 사용된 모든 코드는 이 Repo에 공개되어있습니다.  
 질문/PR/Issue 언제든지 환영입니다.  
 - [english](README.md)
@@ -44,7 +44,7 @@
 ### Google spreadsheet
  - [google spreadsheet link](https://docs.google.com/spreadsheets/d/1c6aFzBUg2X9_EmMgAaPeV_Yn6-wrXbCGIaexmatnhi0/edit?usp=sharing)
 
-### My tool
+### Tools
 #### Run
  - [TensorFlow/TensorFlow-Lite - Python API](app/python) 
  - [TensorFlow/TensorFlow-Lite - C/C++ API](app/cc#tensorflow--tensorflow-lite-cc-api-benchmark-app)
