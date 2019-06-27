@@ -1,5 +1,5 @@
-# My Tensorflow Test
-This is My TensorFlow Test.  
+# My Tensorflow Benchmark
+This is My TensorFlow Benchmark.  
 You can reproduce this result using my source code.   
 All used source code and environment are included in this repo.   
 Question/PR/Issues are always welcome  
@@ -43,7 +43,7 @@ Question/PR/Issues are always welcome
 ### Google spreadsheet
  - [google spreadsheet link](https://docs.google.com/spreadsheets/d/1c6aFzBUg2X9_EmMgAaPeV_Yn6-wrXbCGIaexmatnhi0/edit?usp=sharing)
 
-### My Tool
+### Tools
 #### Run
  - [TensorFlow/TensorFlow-Lite - Python API](app/python) 
  - [TensorFlow/TensorFlow-Lite - C/C++ API](app/cc#tensorflow--tensorflow-lite-cc-api-benchmark-app)
